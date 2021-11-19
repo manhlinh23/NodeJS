@@ -38,10 +38,37 @@ let displayGetCRUD = async (req, res) => {
     })
 }
 
+let getEditCRUD = async (req, res) => {
+    let userId = req.query.id
+    console.log(userId)
+    if (userId) {
+        let userData = await CRUDServices.getUserInfoById(userId)
+
+
+        return res.render('editCRUD.ejs', {
+            user: userData
+        })
+    } else {
+        return res.send('no user')
+    }
+
+    return res.send('edit from controller')
+}
+
+let putCRUD = async (req, res) => {
+    let data = req.body
+    let allUser = await CRUDServices.updateUserData(data)
+    return res.render('displayCRUD.ejs', {
+        dataTable: allUser
+    })
+}
+
 module.exports = {
     getHomePage: getHomePage,
     getAbout: getAbout,
     getCRUD: getCRUD,
     postCRUD: postCRUD,
     displayGetCRUD: displayGetCRUD,
+    getEditCRUD: getEditCRUD,
+    putCRUD: putCRUD,
 }

@@ -1,5 +1,6 @@
 // thuc hien chuc nang tao user va hash password
 import bcrypt from 'bcryptjs';
+import e from 'express';
 import db from "../models/index"
 
 const salt = bcrypt.genSaltSync(10); // tai lieu
@@ -55,7 +56,55 @@ let getAllUser = (data) => {
 
 }
 
+let getUserInfoById = (userId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let user = await db.User.findOne({
+                where: { id: userId },
+                raw: true,
+            })
+
+            if (user) {
+                resolve(user)
+            } else {
+                resolve({})
+            }
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
+
+let updateUserData = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let user = await db.User.findOne({
+                where: { id: data.id },
+                raw: false,
+            })
+            if (user) {
+                user.firstName = data.firstName;
+                user.lastName = data.lastName;
+                user.address = data.address;
+
+                await user.save();
+
+                let allUser = await db.User.findAll();
+                resolve(allUser);
+            } else {
+                resolve();
+            }
+        } catch (error) {
+            reject(error)
+        }
+    })
+    // console.log('data from view')
+    // console.log(data)
+}
+
 module.exports = {
     createNewUser: createNewUser,
     getAllUser: getAllUser,
+    getUserInfoById: getUserInfoById,
+    updateUserData: updateUserData,
 }
