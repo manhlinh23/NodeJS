@@ -19,7 +19,11 @@ let getAbout = (req, res) => {
     return res.render("test/about.ejs")
 }
 
+let getCRUD = (req, res) => {
+    return res.render("hello from homeController")
+}
 module.exports = {
     getHomePage: getHomePage,
     getAbout: getAbout,
+    getCRUD: getCRUD,
 }
