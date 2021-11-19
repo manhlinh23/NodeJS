@@ -30,9 +30,18 @@ let postCRUD = async (req, res) => { // tao interface de client nhap du lieu
     return res.send('hello from homeController');
 }
 
+let displayGetCRUD = async (req, res) => {
+    let data = await CRUDServices.getAllUser();
+    console.log(data)
+    return res.render('displayCRUD.ejs', {
+        dataTable: data
+    })
+}
+
 module.exports = {
     getHomePage: getHomePage,
     getAbout: getAbout,
     getCRUD: getCRUD,
     postCRUD: postCRUD,
+    displayGetCRUD: displayGetCRUD,
 }

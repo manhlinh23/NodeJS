@@ -9,6 +9,7 @@ let initWebRoutes = (app) => {
     router.get('/crud', homeController.getCRUD); // lay thong tin user
 
     router.post('/post-crud', homeController.postCRUD); // day thong tin user 
+    router.get('/get-crud', homeController.displayGetCRUD);
 
     return app.use("/", router);
 }
