@@ -5,9 +5,9 @@ let getHomePage = async (req, res) => {
     try {
 
         let data = await db.User.findAll(); // lay data tu database User
-        console.log("----------");
-        console.log(data);
-        console.log("----------");
+        // console.log("----------");
+        // console.log(data);
+        // console.log("----------");
         return res.render("homepage.ejs", {
             data: JSON.stringify(data)
         })
@@ -63,6 +63,15 @@ let putCRUD = async (req, res) => {
     })
 }
 
+let deleteCRUD = async (req, res) => {
+    let userId = req.query.id
+    if (userId) {
+        await CRUDServices.DeleteByUserId(userId)
+        res.send('deleted succeed!')
+    } else {
+        res.send('no user')
+    }
+}
 module.exports = {
     getHomePage: getHomePage,
     getAbout: getAbout,
@@ -71,4 +80,5 @@ module.exports = {
     displayGetCRUD: displayGetCRUD,
     getEditCRUD: getEditCRUD,
     putCRUD: putCRUD,
+    deleteCRUD: deleteCRUD,
 }
