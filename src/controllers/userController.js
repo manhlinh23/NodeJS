@@ -23,7 +23,7 @@ let handleLogin = async (req, res) => {
 }
 
 let handleGetAllUser = async (req, res) => {
-    let id = req.query.id
+    let id = req.query.id //sd parameter trong postman
     let users = await userServices.getAllUsers(id)
     console.log(users)
 
