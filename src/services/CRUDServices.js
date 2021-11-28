@@ -21,7 +21,6 @@ let createNewUser = async (data) => {
             })
             console.log(hashPasswordFromBcrypt)
             resolve('Success!') // thong bao 
-
         } catch (error) {
             reject(error)
         }
@@ -124,4 +123,5 @@ module.exports = {
     getUserInfoById: getUserInfoById,
     updateUserData: updateUserData,
     DeleteByUserId: DeleteByUserId,
+    hashUserPassword: hashUserPassword,
 }
