@@ -189,10 +189,33 @@ let deleteUser = (userId) => {
     })
 }
 
+let getAllCodeService = (typeInput) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!typeInput) { //kiem tra neu k co dl dau vao
+                resolve({ //tra ve 1 object thong bao
+                    errCode: 1,
+                    errMessage: "Missing input parameters"
+                })
+            } else { //neu co du lieu dau vao
+                let res = {} //tao 1 object rong
+                let allcode = await db.Allcode.findAll({ // tao ham hung dieu lay tu database
+                    where: { type: typeInput }
+                })
+                res.errCode = 0 // tra ve ma code la 0 neu lay du lieu thanh cong
+                res.data = allcode // gan du lieu lay tu database vao
+                resolve(res) // tra ve du lieu gom errCode va data 
+            }
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
 module.exports = {
     handleUserLogin: handleUserLogin,
     getAllUsers: getAllUsers,
     createNewUser: createNewUser,
     editUser: editUser,
     deleteUser: deleteUser,
+    getAllCodeService: getAllCodeService,
 }
