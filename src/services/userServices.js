@@ -27,7 +27,7 @@ let handleUserLogin = (email, password) => {
             let isExist = await checkUserEmail(email) // gan ham isExist cho ham checkUserEmail
             if (isExist) { //neu true
                 let user = await db.User.findOne({ //tim user
-                    attributes: ['email', 'roleId', 'password'], // lay 3 thuoc tinh
+                    attributes: ['email', 'roleId', 'password', 'firstName', 'lastName'], // lay 3 thuoc tinh
                     where: { email: email }, // tim user theo email tu body
                     raw: true, // thong tin raw
                 })
