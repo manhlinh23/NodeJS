@@ -119,6 +119,7 @@ let createNewUser = (data) => {
                     gender: data.gender,
                     roleId: data.roleId,
                     positionId: data.positionId,
+                    image: data.avatar,
                 })
                 resolve({
                     errCode: 0,
@@ -134,7 +135,7 @@ let createNewUser = (data) => {
 let editUser = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
-            if (!data.id) {
+            if (!data.id || !data.roleId || !data.positionId || !data.gender) {
                 resolve({
                     errCode: 1,
                     errMessage: 'missing input parameter'
@@ -148,6 +149,13 @@ let editUser = (data) => {
                 user.firstName = data.firstName;
                 user.lastName = data.lastName;
                 user.address = data.address;
+                user.phonenumber = data.phonenumber;
+                user.gender = data.gender;
+                user.positionId = data.positionId;
+                user.roleId = data.roleId;
+                if (data.avatar) {
+                    user.image = data.avatar
+                }
 
                 await user.save();
 
