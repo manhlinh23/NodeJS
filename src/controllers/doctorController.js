@@ -16,4 +16,44 @@ let getTopDoctorHome = async (req, res) => {
     }
 }
 
-module.exports = { getTopDoctorHome, }
+
+let getAllDoctorsController = async (req, res) => {
+    try {
+        let response = await doctorService.getAllDoctorsService()
+        return res.status(200).json(response)
+    } catch (error) {
+        console.log(error)
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: 'Error from server...'
+        })
+    }
+}
+
+let createInforDoctorController = async (req, res) => {
+    try {
+        let response = await doctorService.createInforDoctorService(req.body)
+        console.log('check api: ', response);
+        return res.status(200).json(response)
+    } catch (error) {
+        console.log(error)
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: 'Error from server...'
+        })
+    }
+}
+
+let getDetailDoctorsController = async (req, res) => {
+    try {
+        let response = await doctorService.getDetailDoctorsService(req.query.id)
+        return res.status(200).json(response)
+    } catch (error) {
+        console.log(error);
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: 'Error from controller...'
+        })
+    }
+}
+module.exports = { getDetailDoctorsController, getTopDoctorHome, getAllDoctorsController, createInforDoctorController }

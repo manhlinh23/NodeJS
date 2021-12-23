@@ -21,9 +21,14 @@ let initWebRoutes = (app) => {
     router.post('/api/create-new-user', userController.handleCreateUser)
     router.put('/api/edit-user', userController.handleEditUser)
     router.delete('/api/delete-user', userController.handleDeleteUser)
-
     router.get('/api/allcode', userController.getAllCode)
+
     router.get('/api/top-doctor-home', doctorController.getTopDoctorHome)
+    router.get('/api/get-all-doctor', doctorController.getAllDoctorsController)
+    router.post('/api/create-infor-doctor', doctorController.createInforDoctorController)
+
+    router.get('/api/get-detail-doctor', doctorController.getDetailDoctorsController)
+
 
 
 
