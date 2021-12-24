@@ -50,24 +50,41 @@ let getAllDoctorsService = () => {
 let createInforDoctorService = (inputData) => {
     return new Promise(async (resolve, reject) => {
         try {
-            if (!inputData.doctorId
+            if (
+                !inputData.doctorId
                 || !inputData.contentHTML
                 || !inputData.contentMarkdown
+                || !inputData.action
             ) {
                 resolve({
                     errCode: 1,
                     errMessage: 'Missing input parameters'
                 })
             } else {
-                await db.Markdown.create({
-                    doctorId: inputData.doctorId,
-                    contentHTML: inputData.contentHTML,
-                    contentMarkdown: inputData.contentMarkdown,
-                    description: inputData.description
-                })
+                if (inputData.action === 'CREATE') {
+                    await db.Markdown.create({
+                        doctorId: inputData.doctorId,
+                        contentHTML: inputData.contentHTML,
+                        contentMarkdown: inputData.contentMarkdown,
+                        description: inputData.description
+                    })
+                } else if (inputData.action === 'UPDATE') {
+                    let doctorMD = await db.Markdown.findOne({
+                        where: { doctorId: inputData.doctorId },
+                        raw: false
+                    })
+
+                    if (doctorMD) {
+                        doctorMD.contentHTML = inputData.contentHTML
+                        doctorMD.contentMarkdown = inputData.contentMarkdown
+                        doctorMD.description = inputData.description
+
+                        await doctorMD.save()
+                    }
+                }
                 resolve({
                     errCode: 0,
-                    errMessage: 'Create succed'
+                    errMessage: 'Create succeed'
                 })
             }
         } catch (error) {
@@ -88,7 +105,7 @@ let getDetailDoctorsService = (inputData) => {
                 let data = await db.User.findOne({
                     where: { id: inputData }, //lay truong roleId co ma la R2
                     attributes: {
-                        exclude: ['password', 'image'] // bo truong password
+                        exclude: ['password'] // bo truong password
                     },
                     include: [
                         {
@@ -98,9 +115,15 @@ let getDetailDoctorsService = (inputData) => {
                         }, //gop 2 truong en va vi vao 1 truong tao moi la position Data
                         { model: db.Allcode, as: 'positionData', attributes: ['valueEn', 'valueVi'] }
                     ],
-                    raw: true,
+                    raw: false,
                     nest: true
                 })
+
+                if (data && data.image) {
+                    data.image = new Buffer(data.image, 'base64').toString('binary')
+                }
+
+                if (!data) { data = {} }
 
                 resolve({
                     errCode: 0,
