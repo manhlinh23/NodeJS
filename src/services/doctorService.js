@@ -1,4 +1,9 @@
 import db from "../models/index"
+require('dotenv').config() //import tham so mns tu .env
+import _ from 'lodash'
+import res from "express/lib/response"
+
+const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE
 
 let getTopDoctorHome = (limit) => {
     return new Promise(async (resolve, reject) => {
@@ -135,9 +140,102 @@ let getDetailDoctorsService = (inputData) => {
         }
     })
 }
+
+let bulkCreateScheduleService = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!data.arrSchedule || !data.doctorId || !data.date) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'Missing input parameters'
+                })
+            } else {
+                let schedule = data.arrSchedule
+                if (schedule && schedule.length > 0) {
+                    //ham gan gtri max_number_schedule vao db
+                    //tao vong map, gan gtri mns vao nhung truong maxNumber *phai co return gtri
+                    schedule = schedule.map(item => {
+                        item.maxNumber = MAX_NUMBER_SCHEDULE
+                        return item
+                    })
+                }
+
+                /**
+                 * ham lay dlieu da ton tai trong db de so sanh 2 truong doctorId va data
+                 * attributes : tra ve 4 truong
+                 */
+                let existing = await db.Schedule.findAll({
+                    where: {
+                        doctorId: data.doctorId,
+                        date: data.date
+                    },
+                    attributes: ['timeType', 'date', 'doctorId', 'maxNumber']
+                })
+                //ham convert date da lay tu db sang string
+                if (existing && existing.length > 0) {
+                    existing = existing.map(item => {
+                        // item.date = new Date(item.date).getTime();
+                        item.date = data.date //tu sua
+                        return item
+                    })
+                }
+                //ham so sanh dlieu tu db va tu react gui ve (existing,toCreate)
+                let toCreate = _.differenceWith(schedule, existing, (a, b) => {
+                    return a.timeType === b.timeType && a.date === b.date
+                })
+
+                //sau khi so sanh se push dlieu khac biet so vs db vao db
+                if (toCreate && toCreate.length > 0) {
+                    await db.Schedule.bulkCreate(toCreate)
+                }
+                console.log('toCreate ', toCreate);
+                console.log('existing ', existing);
+                resolve({
+                    errCode: 0,
+                    errMessage: "Succeed"
+                })
+
+            }
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
+
+let getScheduleDoctorByDateService = (doctorId, date) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!doctorId || !date) {
+                resolve({
+                    errCode: -1,
+                    errMessage: 'missing input parameters'
+                })
+            } else {
+                let data = await db.Schedule.findAll({
+                    where: {
+                        doctorId: doctorId,
+                        date: date
+                    }
+                })
+
+                if (!data) data = []
+
+                resolve({
+                    errCode: 0,
+                    data: data
+                })
+            }
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
+
 module.exports = {
     getTopDoctorHome: getTopDoctorHome,
     getAllDoctorsService: getAllDoctorsService,
     createInforDoctorService: createInforDoctorService,
     getDetailDoctorsService: getDetailDoctorsService,
+    bulkCreateScheduleService: bulkCreateScheduleService,
+    getScheduleDoctorByDateService,
 }

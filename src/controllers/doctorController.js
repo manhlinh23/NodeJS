@@ -56,4 +56,36 @@ let getDetailDoctorsController = async (req, res) => {
         })
     }
 }
-module.exports = { getDetailDoctorsController, getTopDoctorHome, getAllDoctorsController, createInforDoctorController }
+
+let bulkCreateScheduleController = async (req, res) => {
+    try {
+        let response = await doctorService.bulkCreateScheduleService(req.body)
+        console.log('check api: ', response);
+        return res.status(200).json(response)
+    } catch (error) {
+        console.log(error)
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: 'Error from server...'
+        })
+    }
+}
+
+let getScheduleDoctorByDate = async (req, res) => {
+    try {
+        let response = await doctorService.getScheduleDoctorByDateService(req.query.doctorId, req.query.date)
+        return res.status(200).json(response)
+    } catch (error) {
+        console.log(error);
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: 'Error from controller...'
+        })
+    }
+}
+
+module.exports = {
+    getDetailDoctorsController, getTopDoctorHome,
+    getAllDoctorsController, createInforDoctorController, bulkCreateScheduleController,
+    getScheduleDoctorByDate
+}
