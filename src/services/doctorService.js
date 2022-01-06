@@ -60,12 +60,20 @@ let createInforDoctorService = (inputData) => {
                 || !inputData.contentHTML
                 || !inputData.contentMarkdown
                 || !inputData.action
+                || !inputData.selectedProvince
+                || !inputData.nameClinic
+                || !inputData.addressClinic
+                || !inputData.note
+                || !inputData.selectedPrice
+                || !inputData.selectedPayment
             ) {
                 resolve({
                     errCode: 1,
                     errMessage: 'Missing input parameters'
                 })
             } else {
+
+                //upsert Markdown
                 if (inputData.action === 'CREATE') {
                     await db.Markdown.create({
                         doctorId: inputData.doctorId,
@@ -78,14 +86,42 @@ let createInforDoctorService = (inputData) => {
                         where: { doctorId: inputData.doctorId },
                         raw: false
                     })
-
                     if (doctorMD) {
                         doctorMD.contentHTML = inputData.contentHTML
                         doctorMD.contentMarkdown = inputData.contentMarkdown
                         doctorMD.description = inputData.description
-
                         await doctorMD.save()
                     }
+
+                    //upsert Doctor_infor
+                    let doctor = await db.Doctor_info.findOne({
+                        where: { doctorId: inputData.doctorId },
+                        raw: false
+                    })
+
+                    if (doctor) {
+                        //update
+                        doctor.priceId = inputData.selectedPrice
+                        doctor.provinceId = inputData.selectedProvince
+                        doctor.paymentId = inputData.selectedPayment
+                        doctor.addressClinic = inputData.addressClinic
+                        doctor.note = inputData.note
+                        doctor.nameClinic = inputData.nameClinic
+                        doctor.doctorId = inputData.doctorId
+                        await doctor.save()
+                    } else {
+                        //create
+                        await db.Doctor_info.create({
+                            priceId: inputData.selectedPrice,
+                            provinceId: inputData.selectedProvince,
+                            paymentId: inputData.selectedPayment,
+                            addressClinic: inputData.addressClinic,
+                            note: inputData.note,
+                            nameClinic: inputData.nameClinic,
+                            doctorId: inputData.doctorId,
+                        })
+                    }
+
                 }
                 resolve({
                     errCode: 0,
@@ -215,7 +251,13 @@ let getScheduleDoctorByDateService = (doctorId, date) => {
                     where: {
                         doctorId: doctorId,
                         date: date
-                    }
+                    },
+                    // lay trong bang allcode 2 truong en,vi gop vao 1 truong timetypedata
+                    include: [
+                        { model: db.Allcode, as: 'timeTypeData', attributes: ['valueEn', 'valueVi'] }
+                    ],
+                    raw: false,
+                    nest: true
                 })
 
                 if (!data) data = []
