@@ -151,10 +151,22 @@ let getDetailDoctorsService = (inputData) => {
                     include: [
                         {
                             model: db.Markdown,
-                            attributes: ['description', 'contentHTML'
-                                , 'contentMarkdown']
+                            attributes: ['description', 'contentHTML', 'contentMarkdown']
                         }, //gop 2 truong en va vi vao 1 truong tao moi la position Data
-                        { model: db.Allcode, as: 'positionData', attributes: ['valueEn', 'valueVi'] }
+                        { model: db.Allcode, as: 'positionData', attributes: ['valueEn', 'valueVi'] },
+                        {
+                            model: db.Doctor_info,
+                            attributes: {
+                                exclude: ['id', 'doctorId']
+                            },
+                            include: [
+                                //gom 2 truong tra ve 1 object
+                                { model: db.Allcode, as: 'priceTypeData', attributes: ['valueEn', 'valueVi'] },
+                                { model: db.Allcode, as: 'paymentTypeData', attributes: ['valueEn', 'valueVi'] },
+                                { model: db.Allcode, as: 'provinceTypeData', attributes: ['valueEn', 'valueVi'] },
+                            ]
+                        },
+
                     ],
                     raw: false,
                     nest: true
