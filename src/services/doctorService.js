@@ -284,6 +284,42 @@ let getScheduleDoctorByDateService = (doctorId, date) => {
         }
     })
 }
+let getExtraInfoDoctorById = (doctorId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!doctorId) {
+                resolve({
+                    errCode: -1,
+                    errMessage: 'missing input parameters'
+                })
+            } else {
+                let data = await db.Doctor_info.findOne({
+                    where: { doctorId: doctorId }, //lay truong roleId co ma la R2
+                    attributes: {
+                        exclude: ['id', 'doctorId']
+                    },
+                    include: [
+                        //gom 2 truong tra ve 1 object
+                        { model: db.Allcode, as: 'priceTypeData', attributes: ['valueEn', 'valueVi'] },
+                        { model: db.Allcode, as: 'paymentTypeData', attributes: ['valueEn', 'valueVi'] },
+                        { model: db.Allcode, as: 'provinceTypeData', attributes: ['valueEn', 'valueVi'] },
+                    ],
+                    raw: false,
+                    nest: true
+                })
+
+                if (!data) data = []
+
+                resolve({
+                    errCode: 0,
+                    data: data
+                })
+            }
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
 
 module.exports = {
     getTopDoctorHome: getTopDoctorHome,
@@ -291,5 +327,5 @@ module.exports = {
     createInforDoctorService: createInforDoctorService,
     getDetailDoctorsService: getDetailDoctorsService,
     bulkCreateScheduleService: bulkCreateScheduleService,
-    getScheduleDoctorByDateService,
+    getScheduleDoctorByDateService, getExtraInfoDoctorById,
 }
