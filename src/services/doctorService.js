@@ -320,6 +320,59 @@ let getExtraInfoDoctorById = (doctorId) => {
         }
     })
 }
+let getProfileDoctorById = (doctorId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!doctorId) {
+                resolve({
+                    errCode: -1,
+                    errMessage: 'missing input parameters'
+                })
+            } else {
+                let data = await db.User.findOne({
+                    where: { id: doctorId }, //lay truong roleId co ma la R2
+                    attributes: {
+                        exclude: ['password'] // bo truong password
+                    },
+                    include: [
+                        {
+                            model: db.Markdown,
+                            attributes: ['description']
+                        }, //gop 2 truong en va vi vao 1 truong tao moi la position Data
+                        { model: db.Allcode, as: 'positionData', attributes: ['valueEn', 'valueVi'] },
+                        {
+                            model: db.Doctor_info,
+                            attributes: {
+                                exclude: ['id', 'doctorId']
+                            },
+                            include: [
+                                //gom 2 truong tra ve 1 object
+                                { model: db.Allcode, as: 'priceTypeData', attributes: ['valueEn', 'valueVi'] },
+                                { model: db.Allcode, as: 'paymentTypeData', attributes: ['valueEn', 'valueVi'] },
+                                { model: db.Allcode, as: 'provinceTypeData', attributes: ['valueEn', 'valueVi'] },
+                            ]
+                        },
+
+                    ],
+                    raw: false,
+                    nest: true
+                })
+                if (data && data.image) {
+                    data.image = new Buffer(data.image, 'base64').toString('binary')
+                }
+
+                if (!data) { data = {} }
+
+                resolve({
+                    errCode: 0,
+                    data: data
+                })
+            }
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
 
 module.exports = {
     getTopDoctorHome: getTopDoctorHome,
@@ -328,4 +381,5 @@ module.exports = {
     getDetailDoctorsService: getDetailDoctorsService,
     bulkCreateScheduleService: bulkCreateScheduleService,
     getScheduleDoctorByDateService, getExtraInfoDoctorById,
+    getProfileDoctorById,
 }
