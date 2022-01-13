@@ -1,4 +1,5 @@
 import db from "../models/index"
+import emailServices from './emailServices'
 
 let postBookAppointment = (data) => {
     return new Promise(async (resolve, reject) => {
@@ -9,6 +10,16 @@ let postBookAppointment = (data) => {
                     errMessage: "Missing input parameters"
                 })
             } else {
+
+                //send email
+
+                await emailServices.sendSimpleEmail({
+                    receiverEmail: data.email,
+                    patientName: "Nguyễn Văn A",
+                    time: "9:00 - 10:00 - Chủ nhật - 23/7/2022",
+                    doctorName: "Mạnh Linh",
+                    redirectLink: "https://github.com/manhlinh23?tab=repositories"
+                })
                 //upsert 
                 let user = await db.User.findOrCreate({
                     where: { email: data.email },
