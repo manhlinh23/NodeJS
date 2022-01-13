@@ -3,7 +3,7 @@ import doctorService from '../services/doctorService'
 
 let getTopDoctorHome = async (req, res) => {
     let limit = req.query.limit //gioi han bac si
-    if (!limit) limit = 10
+    if (!limit) limit = 5
     try {
         let response = await doctorService.getTopDoctorHome(+limit) //chuyen tu string sang int '3' -> +3
         return res.status(200).json(response)

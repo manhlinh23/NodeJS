@@ -1,11 +1,6 @@
 'use strict';
 module.exports = {
     up: async (queryInterface, Sequelize) => {
-        // statusId: DataTypes.STRING,
-        // doctorId: DataTypes.INTEGER,
-        // patientId: DataTypes.INTEGER,
-        // date: DataTypes.DATE,
-        // timeType: DataTypes.STRING,
         await queryInterface.createTable('bookings', {
             id: {
                 allowNull: false,
@@ -14,7 +9,7 @@ module.exports = {
                 type: Sequelize.INTEGER
             },
             statusId: {
-                type: Sequelize.INTEGER
+                type: Sequelize.STRING
             },
             doctorId: {
                 type: Sequelize.INTEGER
@@ -23,7 +18,7 @@ module.exports = {
                 type: Sequelize.STRING
             },
             date: {
-                type: Sequelize.DATE
+                type: Sequelize.STRING
             },
             timeType: {
                 type: Sequelize.STRING

@@ -11,7 +11,7 @@ let getTopDoctorHome = (limit) => {
             let users = await db.User.findAll({
                 limit: limit, //gioi han lay
                 where: { roleId: 'R2' }, //lay truong roleId co ma la R2
-                order: [['createdAt', 'DESC']], // sap xep tu tren xuong duoi cua trường createdAt
+                order: [['createdAt', 'ASC']], // sap xep tu tren xuong duoi cua trường createdAt
                 attributes: {
                     exclude: ['password'] // bo truong password
                 },
