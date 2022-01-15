@@ -266,7 +266,8 @@ let getScheduleDoctorByDateService = (doctorId, date) => {
                     },
                     // lay trong bang allcode 2 truong en,vi gop vao 1 truong timetypedata
                     include: [
-                        { model: db.Allcode, as: 'timeTypeData', attributes: ['valueEn', 'valueVi'] }
+                        { model: db.Allcode, as: 'timeTypeData', attributes: ['valueEn', 'valueVi'] },
+                        { model: db.User, as: 'doctorData', attributes: ['firstName', 'lastName'] }
                     ],
                     raw: false,
                     nest: true

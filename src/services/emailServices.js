@@ -18,8 +18,15 @@ let sendSimpleEmail = async (data) => {
         from: '"Manh Linh 👻" <nmanhlinh2323@gmail.com>', // sender address
         to: data.receiverEmail, // list of receivers
         subject: "Thông tin đặt lịch khám bệnh", // Subject line
-        html:
-            `
+        html: bodyHTMLEmail(data)
+    });
+}
+
+let bodyHTMLEmail = (data) => {
+    let result = ''
+
+    if (data.language === 'vi') {
+        result = `
         <h3>Xin chào ${data.patientName},</h3>
         <p>Bạn nhận được email này vì đã đặt lịch khám bệnh</p>
         <p>Thông tin lịch khám:</p>
@@ -28,7 +35,20 @@ let sendSimpleEmail = async (data) => {
         <p>Nhấn vào đường link dưới đây để xác nhận đặt lịch khám, xin cám ơn</p>
         <div><a href=${data.redirectLink} targer="_blank">Xác nhận</a></div>
         `
-    });
+    }
+    if (data.language === 'en') {
+        result = `
+        <h3>Dear ${data.patientName},</h3>
+        <p>You received this email because you had book appointmet</p>
+        <p>Detail of examination schedule:</p>
+        <p><b>Time: ${data.time}</b></p>
+        <p><b>Doctor: ${data.doctorName}</b></p>
+        <p>Click the link below to confirm</p>
+        <div><a href=${data.redirectLink} targer="_blank">Xác nhận</a></div>
+        `
+    }
+
+    return result
 }
 
 module.exports = {
