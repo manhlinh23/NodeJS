@@ -52,24 +52,56 @@ let getAllDoctorsService = () => {
     })
 }
 
+let isValidcreateInforDoctorService = (input) => {
+    let arr = ['doctorId', 'doctorId',
+        'contentHTML',
+        'contentMarkdown',
+        'action',
+        'selectedProvince',
+        'nameClinic',
+        'addressClinic',
+        'note',
+        'selectedPrice',
+        'selectedPayment',
+        'selectedSpecialty',]
+
+    let isValid = true
+    let element = ''
+    for (let i = 0; i < arr.length; i++) {
+        if (!input[arr[i]]) {
+            isValid = false
+            element = arr[i]
+            break;
+        }
+    }
+
+    return ({
+        isValid, element
+    })
+}
+
 let createInforDoctorService = (inputData) => {
     return new Promise(async (resolve, reject) => {
         try {
+
+            let obj = isValidcreateInforDoctorService(inputData)
             if (
-                !inputData.doctorId
-                || !inputData.contentHTML
-                || !inputData.contentMarkdown
-                || !inputData.action
-                || !inputData.selectedProvince
-                || !inputData.nameClinic
-                || !inputData.addressClinic
-                || !inputData.note
-                || !inputData.selectedPrice
-                || !inputData.selectedPayment
+                // !inputData.doctorId
+                // || !inputData.contentHTML
+                // || !inputData.contentMarkdown
+                // || !inputData.action
+                // || !inputData.selectedProvince
+                // || !inputData.nameClinic
+                // || !inputData.addressClinic
+                // || !inputData.note
+                // || !inputData.selectedPrice
+                // || !inputData.selectedPayment
+                // || !inputData.selectedSpecialty
+                obj.isValid === false
             ) {
                 resolve({
                     errCode: 1,
-                    errMessage: 'Missing input parameters'
+                    errMessage: `Missing input parameters ${obj.element}`
                 })
             } else {
 
@@ -108,6 +140,7 @@ let createInforDoctorService = (inputData) => {
                         doctor.note = inputData.note
                         doctor.nameClinic = inputData.nameClinic
                         doctor.doctorId = inputData.doctorId
+                        doctor.specialtyId = inputData.selectedSpecialty
                         await doctor.save()
                     } else {
                         //create
@@ -164,6 +197,7 @@ let getDetailDoctorsService = (inputData) => {
                                 { model: db.Allcode, as: 'priceTypeData', attributes: ['valueEn', 'valueVi'] },
                                 { model: db.Allcode, as: 'paymentTypeData', attributes: ['valueEn', 'valueVi'] },
                                 { model: db.Allcode, as: 'provinceTypeData', attributes: ['valueEn', 'valueVi'] },
+                                // { model: db.Specialty, attributes: ['id'] }
                             ]
                         },
 

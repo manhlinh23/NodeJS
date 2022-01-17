@@ -12,7 +12,19 @@ let createNewSpecialty = async (req, res) => {
         })
     }
 }
+let getSpecialties = async (req, res) => {
+    try {
+        let response = await specialtyService.getSpecialties()
+        return res.status(200).json(response)
+    } catch (error) {
+        console.log(error);
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: 'Error from controller...'
+        })
+    }
+}
 
 module.exports = {
-    createNewSpecialty
+    createNewSpecialty, getSpecialties
 }

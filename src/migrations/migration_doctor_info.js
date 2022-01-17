@@ -13,6 +13,12 @@ module.exports = {
                 type: Sequelize.STRING,
                 allowNull: false,
             },
+            specialtyId: {
+                type: Sequelize.STRING,
+            },
+            clinicId: {
+                type: Sequelize.STRING,
+            },
             provinceId: {
                 type: Sequelize.STRING,
                 allowNull: false,
