@@ -1,3 +1,4 @@
+const res = require("express/lib/response")
 const db = require("../models")
 
 let createNewSpecialty = (data) => {
@@ -49,6 +50,53 @@ let getSpecialties = () => {
     })
 }
 
+let getDetailSpecialties = (dataInput, location) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!dataInput || !location) {
+                resolve({
+                    errCode: 1,
+                    errMessage: "Missing input parameter"
+                })
+            } else {
+                let data = {}
+                data = await db.Specialty.findOne({
+                    where: { id: dataInput },
+                    attributes: ['contentHTML', 'contentMarkDown']
+                })
+                if (data) {
+                    let arrDoctorBySpecialty = []
+                    if (location === 'ALL') {
+                        arrDoctorBySpecialty = await db.Doctor_info.findAll({
+                            where: { specialtyId: dataInput },
+                            attributes: ['doctorId', 'provinceId']
+                        })
+                    } else {
+                        arrDoctorBySpecialty = await db.Doctor_info.findAll({
+                            where: {
+                                specialtyId: dataInput,
+                                provinceId: location
+                            },
+                            attributes: ['doctorId', 'provinceId']
+                        })
+                    }
+                    data.arrDoctorBySpecialty = arrDoctorBySpecialty
+                } else {
+                    data = {}
+                }
+                resolve({
+                    errCode: 0,
+                    errMessage: 'Succeed',
+                    data: data
+                })
+            }
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
+
+
 module.exports = {
-    createNewSpecialty, getSpecialties
+    createNewSpecialty, getSpecialties, getDetailSpecialties
 }
