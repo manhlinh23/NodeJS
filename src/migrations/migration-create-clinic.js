@@ -11,16 +11,19 @@ module.exports = {
                 primaryKey: true,
                 type: Sequelize.INTEGER
             },
-            name: {
-                type: Sequelize.STRING
+            contentHTML: {
+                type: Sequelize.TEXT
+            },
+            contentMarkDown: {
+                type: Sequelize.TEXT
             },
             address: {
-                type: Sequelize.STRING
-            },
-            description: {
-                type: Sequelize.STRING
+                type: Sequelize.TEXT
             },
             image: {
+                type: Sequelize.BLOB('long')
+            },
+            name: {
                 type: Sequelize.STRING
             },
             createdAt: {
