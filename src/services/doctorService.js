@@ -141,6 +141,7 @@ let createInforDoctorService = (inputData) => {
                         doctor.nameClinic = inputData.nameClinic
                         doctor.doctorId = inputData.doctorId
                         doctor.specialtyId = inputData.selectedSpecialty
+                        doctor.clinicId = inputData.selectedClinic
                         await doctor.save()
                     } else {
                         //create
@@ -152,6 +153,7 @@ let createInforDoctorService = (inputData) => {
                             note: inputData.note,
                             nameClinic: inputData.nameClinic,
                             doctorId: inputData.doctorId,
+                            clinicId: inputData.clinicId,
                         })
                     }
 

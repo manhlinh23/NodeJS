@@ -30,6 +30,63 @@ let createNewClinic = (data) => {
     })
 }
 
+
+let getClinic = () => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let data = await db.Clinic.findAll()
+            if (data && data.length > 0) {
+                data.map((item => {
+                    item.image = new Buffer(item.image, 'base64').toString('binary')
+                }))
+            }
+            resolve({
+                errCode: 0,
+                data
+            })
+
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+
+let getDetailClinic = (dataInput) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!dataInput) {
+                resolve({
+                    errCode: 1,
+                    errMessage: "Missing input parameter"
+                })
+            } else {
+                let data = {}
+                data = await db.Clinic.findOne({
+                    where: { id: dataInput },
+                    attributes: ['contentHTML', 'contentMarkDown', 'address', 'name']
+                })
+                if (data) {
+                    let arrDoctorByClinic = []
+                    arrDoctorByClinic = await db.Doctor_info.findAll({
+                        where: { clinicId: dataInput },
+                        attributes: ['doctorId', 'provinceId']
+                    })
+
+                    data.arrDoctorByClinic = arrDoctorByClinic
+                } else {
+                    data = {}
+                }
+                resolve({
+                    errCode: 0,
+                    errMessage: 'Succeed',
+                    data: data
+                })
+            }
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
 module.exports = {
-    createNewClinic
+    createNewClinic, getClinic, getDetailClinic
 }
