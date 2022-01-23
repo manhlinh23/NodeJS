@@ -50,7 +50,56 @@ let bodyHTMLEmail = (data) => {
 
     return result
 }
+let bodyHTMLEmailRemedy = (data) => {
+    let result = ''
 
+    if (data.language === 'vi') {
+        result = `
+        <h3>Xin chào,</h3>
+        <p>Bạn nhận được email này vì đã khám bệnh</p>
+        <p>Thông tin đơn thuốc:</p>
+        <p>Xin cảm ơn</p>
+
+        `
+    }
+    if (data.language === 'en') {
+        result = `
+        <h3>Dear ,</h3>
+        <p>You received this email because you had examinated</p>
+        <p>Detail of Prescription:</p>
+        <p>Thank you</p>
+        `
+    }
+
+    return result
+}
+
+let sendAttachmet = async (data) => {
+    let transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 587,
+        secure: false, // true for 465, false for other ports
+        auth: {
+            user: process.env.EMAIL_APP, // generated ethereal user
+            pass: process.env.EMAIL_APP_PASSWORD, // generated ethereal password
+        },
+    });
+
+    // send mail with defined transport object
+    let info = await transporter.sendMail({
+        from: '"Manh Linh 👻" <nmanhlinh2323@gmail.com>', // sender address
+        to: data.email, // list of receivers
+        subject: "Kết quả khám bệnh", // Subject line
+        html: bodyHTMLEmailRemedy(data),
+        attachments: [
+            {
+                filename: 'prescription.png',
+                content: data.imageBase64.split('base64,')[1],
+                encoding: 'base64'
+            }
+        ]
+    });
+}
 module.exports = {
-    sendSimpleEmail
+    sendSimpleEmail, sendAttachmet
 }

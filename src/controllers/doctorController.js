@@ -119,11 +119,23 @@ let getListPatient = async (req, res) => {
         })
     }
 }
+let postRemedy = async (req, res) => {
+    try {
+        let response = await doctorService.postRemedy(req.body)
+        return res.status(200).json(response)
+    } catch (error) {
+        console.log(error);
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: 'Error from controller...'
+        })
+    }
+}
 
 
 
 module.exports = {
     getDetailDoctorsController, getTopDoctorHome,
     getAllDoctorsController, createInforDoctorController, bulkCreateScheduleController,
-    getScheduleDoctorByDate, getExtraInfoDoctorById, getProfileDoctorById, getListPatient
+    getScheduleDoctorByDate, getExtraInfoDoctorById, getProfileDoctorById, getListPatient, postRemedy
 }

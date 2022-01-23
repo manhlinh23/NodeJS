@@ -1,8 +1,7 @@
 import db from "../models/index"
 require('dotenv').config() //import tham so mns tu .env
 import _ from 'lodash'
-import res from "express/lib/response"
-
+import emailServices from '../services/emailServices'
 const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE
 
 let getTopDoctorHome = (limit) => {
@@ -417,7 +416,7 @@ let getListPatient = (doctorId, date) => {
         try {
             if (!doctorId || !date) {
                 resolve({
-                    errCode: 0,
+                    errCode: 1,
                     errMessage: 'Missing parameter'
                 })
             } else {
@@ -452,6 +451,41 @@ let getListPatient = (doctorId, date) => {
         }
     })
 }
+let postRemedy = (input) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!input.doctorId || !input.patientId || !input.imageBase64 || !input.timeType || !input.email) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'Missing parameter'
+                })
+            } else {
+                let appointment = await db.Booking.findOne({
+                    where: {
+                        statusId: 'S2',
+                        doctorId: input.doctorId,
+                        patientId: input.patientId,
+                        timeType: input.timeType
+                    },
+                    raw: false,
+                })
+                if (appointment) {
+                    appointment.statusId = 'S3'
+                    await appointment.save()
+                }
+
+                await emailServices.sendAttachmet(input)
+
+                resolve({
+                    errCode: 0,
+                    errMessage: 'Succeed'
+                })
+            }
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
 module.exports = {
     getTopDoctorHome: getTopDoctorHome,
     getAllDoctorsService: getAllDoctorsService,
@@ -459,5 +493,5 @@ module.exports = {
     getDetailDoctorsService: getDetailDoctorsService,
     bulkCreateScheduleService: bulkCreateScheduleService,
     getScheduleDoctorByDateService, getExtraInfoDoctorById,
-    getProfileDoctorById, getListPatient
+    getProfileDoctorById, getListPatient, postRemedy
 }
